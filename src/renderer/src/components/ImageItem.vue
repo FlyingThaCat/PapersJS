@@ -21,7 +21,7 @@ const deleteImage = async () => {
 
 <template>
   <div :id="props.id" class="flex items-center h-12 hover:bg-zinc-600/20 rounded-md w-full p-1">
-    <Vicon name="md-imagesearch-round" class="h-8 w-8 text-white" />
+    <Vicon name="md-imagesearch-round" class="h-8 w-8 text-white mx-2" />
     <h1 class="text-white flex-grow ml-2">{{ props.items }}</h1>
     <div class="flex space-x-2 ml-2">
       <div

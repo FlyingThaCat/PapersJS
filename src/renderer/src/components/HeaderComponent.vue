@@ -1,7 +1,7 @@
 <script>
 import PapersJS from '../../../../resources/PapersJS.svg?asset'
 export default {
-  name: 'Header',
+  name: 'HeaderComponent',
   data() {
     return {
       PapersJS

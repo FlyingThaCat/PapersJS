@@ -43,9 +43,11 @@ export default {
 </script>
 
 <template>
-  <div class="flex flex-col h-[89vh]">
+  <div class="flex flex-col h-[85vh]">
     <h1 class="font-semibold text-white text-3xl py-5">Add Images</h1>
-    <div class="flex-1 flex flex-col border-2 border-gray-700 px-4 py-4 rounded-lg box-border max-h-[80%]">
+    <div
+      class="flex-1 flex flex-col border-2 border-gray-700 px-4 py-4 rounded-lg box-border max-h-[80%]"
+    >
       <button
         class="btn w-full bg-zinc-200 hover:bg-zinc-400 text-black rounded-xl mb-4"
         @click="showModal()"
@@ -53,14 +55,19 @@ export default {
         <span class="font-semibold">+ Add</span>
       </button>
       <div class="flex-1 flex flex-col gap-2 overflow-auto">
-        <ImageItem
-          v-for="image in images"
-          :id="image.id"
-          :key="image.id"
-          :items="image.query"
-          :badges="[image.provider, image.type.toLowerCase()]"
-          @image-deleted="handleImageDeleted"
-        />
+        <template v-for="(image, index) in images" :key="image.id">
+          <ImageItem
+            :id="image.id"
+            :items="image.query"
+            :badges="[image.provider, image.type.toLowerCase()]"
+            @image-deleted="handleImageDeleted"
+          />
+          <!-- Add divider except for the last item -->
+          <div
+            v-if="index < images.length - 1"
+            class="h-[1px] mx-2 bg-slate-700 rounded-full"
+          ></div>
+        </template>
       </div>
     </div>
     <AddImageModal @image-added="handleImageAdded" />

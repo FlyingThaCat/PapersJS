@@ -15,6 +15,12 @@ const initDatabase = () => {
     )`
   db.exec(imagesQuery)
 
+  const settingsQuery = `
+    CREATE TABLE IF NOT EXISTS settings (
+  updateInterval INTEGER NOT NULL DEFAULT 300
+)`
+  db.exec(settingsQuery)
+
   return db
 }
 
@@ -29,4 +35,15 @@ const insertImage = (db, searchQuery, source, type) => {
   }
 }
 
-export { initDatabase, insertImage }
+const updateInterval = (db, interval) => {
+  try {
+    console.log('Updating interval:', interval)
+    const updateQuery = db.prepare('UPDATE settings SET updateInterval = ?')
+    const info = updateQuery.run(interval)
+    console.log('Update Result:', info)
+  } catch (error) {
+    console.error('Database update error:', error)
+  }
+}
+
+export { initDatabase, insertImage, updateInterval }

@@ -3,7 +3,7 @@ export default {
   name: 'CurrentImage',
   methods: {
     onClick() {
-      window.electron.ipcRenderer.send('spawn-gettyImages')
+      window.electron.ipcRenderer.invoke('getty-images-search', 'The Chainsmokers', 'editorial')
     }
   }
 }

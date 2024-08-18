@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import Header from './components/Header.vue'
+import HeaderComponent from './components/HeaderComponent.vue'
 
 window.electron.ipcRenderer.send('spawn-gettyImages')
 </script>
 
 <template>
-  <Header />
+  <HeaderComponent />
   <router-view></router-view>
 </template>

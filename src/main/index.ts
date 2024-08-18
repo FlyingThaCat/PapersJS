@@ -5,6 +5,10 @@ import icon from '../../resources/icon.png?asset'
 import { getAppUserDataDir } from '../storage/filesystem'
 import fs from 'fs'
 import { initDatabase, insertImage } from '../storage/db'
+import { searchImages } from '../providers/GettyImages/main'
+
+let currentIndex = 0;
+// let interval = 300;
 
 function createWindow(): void {
   // Create the browser window.
@@ -49,6 +53,21 @@ const checkIfDatabaseExists = async () => {
   }
 }
 
+function fetchAndUpdateWallpaper() {
+  const db = initDatabase()
+  db.all('SELECT * FROM images ORDER BY id', [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    
+    if (rows.length > 0) {
+      const data = rows[currentIndex];
+      console.log('Setting wallpaper:', data.query, data.provider, data.type);
+      currentIndex = (currentIndex + 1) % rows.length;
+    }
+  });
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -90,12 +109,50 @@ app.whenReady().then(() => {
     }
   })
 
+  ipcMain.handle('db-update-interval', async (_, interval) => {
+    try {
+      // do conversion here 5s -> 5, 5m -> 300, 5h -> 18000
+      if (interval.endsWith('s')) {
+        interval = parseInt(interval.replace('s', ''))
+      } else if (interval.endsWith('m')) {
+        interval = parseInt(interval.replace('m', '')) * 60
+      } else if (interval.endsWith('h')) {
+        interval = parseInt(interval.replace('h', '')) * 60 * 60
+      } else {
+        // default to 5 minutes
+        interval = 300
+      }
+
+      const db = initDatabase()
+      db.prepare('UPDATE settings SET updateInterval = ?').run(interval)
+    } catch (error) {
+      console.error('Database operation error:', error)
+    }
+  })
+
+  ipcMain.handle('db-get-settings', async () => {
+    try {
+      const db = initDatabase()
+      return db.prepare('SELECT * FROM settings').get()
+    } catch (error) {
+      console.error('Database operation error:', error)
+    }
+  })
+
+  ipcMain.handle('getty-images-search', async (_, query, type) => {
+    try {
+      const result = searchImages(query, type)
+      console.log('Getty Images search result:', result)
+    } catch (error) {
+      console.error('Getty Images search error:', error)
+    }
+  })
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
   checkIfDatabaseExists().then(() => {
-  createWindow()
+    createWindow()
   })
 
   app.on('activate', function () {

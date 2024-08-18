@@ -23,7 +23,9 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
+    "axios": "^1.7.4",
     "better-sqlite3": "^11.1.2",
+    "cheerio": "^1.0.0",
     "electron-updater": "^6.1.7",
     "oh-vue-icons": "^1.0.0-rc3",
     "vue-router": "^4.4.3"
