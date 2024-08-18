@@ -5,14 +5,15 @@ import {
   MdAddphotoalternateRound,
   MdSettingsRound,
   MdImagesearchRound,
-  IoClose
+  IoClose,
+  IoSearch
 } from 'oh-vue-icons/icons'
 
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 
-addIcons(IoImage, MdAddphotoalternateRound, MdSettingsRound, MdImagesearchRound, IoClose)
+addIcons(IoImage, MdAddphotoalternateRound, MdSettingsRound, MdImagesearchRound, IoClose, IoSearch)
 
 const app = createApp(App)
 app.component('Vicon', OhVueIcon)

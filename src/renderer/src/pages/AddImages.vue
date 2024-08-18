@@ -1,9 +1,17 @@
 <script>
 import ImageItem from '../components/ImageItem.vue'
+import AddImageModal from '../components/AddImageModal.vue'
+
 export default {
   name: 'AddImages',
   components: {
-    ImageItem
+    ImageItem,
+    AddImageModal
+  },
+  methods: {
+    showModal() {
+      document.getElementById('AddImageModal').showModal()
+    }
   }
 }
 </script>
@@ -14,8 +22,11 @@ export default {
     <div
       class="border-2 border-gray-700 px-10 py-4 flex flex-col items-center justify-center rounded-lg"
     >
-      <button class="btn w-full bg-zinc-200 hover:bg-zinc-400 text-black rounded-1xl">
-        <text class="font-semibold">+ Add</text>
+      <button
+        class="btn w-full bg-zinc-200 hover:bg-zinc-400 text-black rounded-1xl"
+        @click="showModal()"
+      >
+        <span class="font-semibold">+ Add</span>
       </button>
       <div class="flex flex-col pt-5 gap-2 w-full max-h-80 overflow-auto">
         <div class="px-2 py-2">
@@ -29,5 +40,6 @@ export default {
         </div>
       </div>
     </div>
+    <AddImageModal />
   </div>
 </template>
