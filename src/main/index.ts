@@ -2,7 +2,9 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { createGettyImagesWindow } from '../providers/GettyImages/main'
+import { getAppUserDataDir } from '../storage/filesystem'
+import fs from 'fs'
+import { initDatabase, insertImage } from '../storage/db'
 
 function createWindow(): void {
   // Create the browser window.
@@ -10,7 +12,10 @@ function createWindow(): void {
     width: 800,
     height: 600,
     show: false,
+    titleBarStyle: 'hidden',
+    frame: false,
     autoHideMenuBar: true,
+    resizable: false,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -36,6 +41,14 @@ function createWindow(): void {
   }
 }
 
+const checkIfDatabaseExists = async () => {
+  const dbPath = join(getAppUserDataDir(), 'Database', 'appData.db')
+  if (!fs.existsSync(dbPath)) {
+    const db = initDatabase()
+    db.close()
+  }
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -50,11 +63,40 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
+  ipcMain.handle('db-insert-image', async (_, searchQuery, source, type) => {
+    try {
+      const db = initDatabase()
+      insertImage(db, searchQuery, source, type)
+    } catch (error) {
+      console.error('Database operation error:', error)
+    }
+  })
+
+  ipcMain.handle('db-get-images', async () => {
+    try {
+      const db = initDatabase()
+      return db.prepare('SELECT * FROM images').all()
+    } catch (error) {
+      console.error('Database operation error:', error)
+    }
+  })
+
+  ipcMain.handle('db-delete-image', async (_, id) => {
+    try {
+      const db = initDatabase()
+      db.prepare('DELETE FROM images WHERE id = ?').run(id)
+    } catch (error) {
+      console.error('Database operation error:', error)
+    }
+  })
+
+
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
+  checkIfDatabaseExists().then(() => {
   createWindow()
-  createGettyImagesWindow()
+  })
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

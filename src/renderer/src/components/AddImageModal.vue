@@ -1,27 +1,28 @@
-<script>
-export default {
-  name: 'AddImageModal',
-  data() {
-    return {
-      searchQuery: '',
-      source: 'Getty Images',
-      type: 'Creative',
-      hasError: false
-    }
-  },
-  methods: {
-    addImage() {
-      if (this.searchQuery.trim() === '') {
-        this.hasError = true
-        return
-      }
-      this.hasError = false
-      console.log('Add Image', this.searchQuery, this.source, this.type)
-      // Clear form after adding
-      this.searchQuery = ''
-      this.type = 'Creative'
-    }
+<script setup lang="ts">
+import { defineEmits, ref } from 'vue'
+
+const emit = defineEmits(['image-added'])
+const searchQuery = ref('')
+const source = ref('Getty Images')
+const type = ref('Creative')
+
+const addImage = async () => {
+  try {
+    await window.electron.ipcRenderer.invoke(
+      'db-insert-image',
+      searchQuery.value,
+      source.value,
+      type.value
+    )
+    emit('image-added', searchQuery.value)
+    const dialog = document.getElementById('AddImageModal') as HTMLDialogElement
+    dialog?.close()
+  } catch (error) {
+    console.error('Failed to add image:', error)
   }
+  // Clear form after adding
+  searchQuery.value = ''
+  type.value = 'Creative'
 }
 </script>
 
@@ -35,10 +36,7 @@ export default {
       <div class="mt-2 gap-4 flex flex-col">
         <div>
           <span class="text-sm font-bold">Search Query</span>
-          <label
-            class="mx-0 mt-2 input input-bordered flex items-center gap-2"
-            :class="{ 'input-error': hasError }"
-          >
+          <label class="mx-0 mt-2 input input-bordered flex items-center gap-2">
             <input
               v-model="searchQuery"
               type="text"
@@ -48,17 +46,17 @@ export default {
             />
             <Vicon name="io-search" class="w-5 h-5" />
           </label>
-          <span v-if="hasError" class="text-error text-sm">Search query is required</span>
         </div>
         <div class="flex flex-col">
           <span class="text-sm font-bold">Source</span>
-          <select class="select mt-2 select-bordered w-full" disabled v-model="source">
+          <select v-model="source" class="select mt-2 select-bordered w-full" disabled>
             <option>Getty Images</option>
+            <option>Unsplash</option>
           </select>
         </div>
         <div class="flex flex-col">
           <span class="text-sm font-bold">Type</span>
-          <select class="select mt-2 select-bordered w-full" v-model="type">
+          <select v-model="type" class="select mt-2 select-bordered w-full">
             <option>Creative</option>
             <option>Editorial</option>
           </select>
@@ -68,8 +66,8 @@ export default {
         <button
           type="button"
           class="btn btn-neutral w-full"
-          @click="addImage"
           :disabled="searchQuery.trim() === ''"
+          @click="addImage"
         >
           Add Image
         </button>

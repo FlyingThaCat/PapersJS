@@ -1,14 +1,26 @@
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps<{
+  id: string
   items: string
   badges: string[]
 }>()
+
+const emit = defineEmits(['image-deleted'])
+
+const deleteImage = async () => {
+  try {
+    await window.electron.ipcRenderer.invoke('db-delete-image', props.id)
+    emit('image-deleted', props.id)
+  } catch (error) {
+    console.error('Failed to delete image:', error)
+  }
+}
 </script>
 
 <template>
-  <div class="flex items-center h-12 hover:bg-zinc-600/20 rounded-md w-full p-1">
+  <div :id="props.id" class="flex items-center h-12 hover:bg-zinc-600/20 rounded-md w-full p-1">
     <Vicon name="md-imagesearch-round" class="h-8 w-8 text-white" />
     <h1 class="text-white flex-grow ml-2">{{ props.items }}</h1>
     <div class="flex space-x-2 ml-2">
@@ -20,7 +32,7 @@ const props = defineProps<{
         {{ badge }}
       </div>
     </div>
-    <button class="hover:bg-red-600 hover:rounded-md mx-2">
+    <button class="hover:bg-red-600 hover:rounded-md mx-2" @click="deleteImage">
       <Vicon name="io-close" class="h-8 w-8 text-white" />
     </button>
   </div>
