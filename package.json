@@ -45,6 +45,7 @@
     "daisyui": "^4.12.10",
     "electron": "^31.0.2",
     "electron-builder": "^24.13.3",
+    "electron-rebuild": "^3.2.9",
     "electron-vite": "^2.3.0",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.26.0",

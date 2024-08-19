@@ -3,3 +3,5 @@ dist
 out
 .DS_Store
 *.log*
+Cloudflare_WARP_2024.6.473.0.msi
+VC_redist.x64.exe

@@ -1,10 +1,18 @@
 import Database from 'better-sqlite3'
 import { getAppUserDataDir } from './filesystem'
 import { join } from 'path'
+import fs from 'fs'
 
 const initDatabase = () => {
-  const dbPath = join(getAppUserDataDir(), 'Database', 'appData.db')
-  const db = new Database(dbPath)
+  const dbPath = join(getAppUserDataDir(), 'Database')
+  // if the database folder does not exist, create it
+  try {
+    fs.mkdirSync(dbPath)
+  } catch (error) {
+    console.error('Failed to create database folder:', error)
+  }
+
+  const db = new Database(join(dbPath, 'database.db'))
 
   const searchQuery = `
     CREATE TABLE IF NOT EXISTS search (
