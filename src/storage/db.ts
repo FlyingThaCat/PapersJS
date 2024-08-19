@@ -81,12 +81,12 @@ const getCookie = (provider) => {
   }
 }
 
-const insertWallpaper = async (url) => {
+const insertWallpaper = async (url, query) => {
   try {
     const db = initDatabase()
-    const insertQuery = db.prepare('INSERT INTO wallpapers (url) VALUES (?)')
-    insertQuery.run(url)
-    console.log('Wallpaper inserted:', url)
+    const insertQuery = db.prepare('INSERT INTO wallpapers (url, query) VALUES (?, ?)')
+    insertQuery.run(url, query)
+    console.log('Wallpaper inserted:', query, url)
   } catch (error) {
     console.error('Failed to insert wallpaper:', error)
   }

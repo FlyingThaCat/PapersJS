@@ -144,6 +144,7 @@ app.whenReady().then(() => {
 
   ipcMain.handle('getty-images-search', async (_, query, type) => {
     try {
+      console.log('Getty Images search query:', query, type)
       const result = searchImages(query, type)
       console.log('Getty Images search result:', result)
     } catch (error) {
@@ -191,7 +192,6 @@ app.whenReady().then(() => {
   checkIfDatabaseExists().then(() => {
     updateInterval(initDatabase())
     createWindow()
-    setInterval(fetchAndSetWallpaper, updateInterval * 1000)
   })
 
   app.on('activate', function () {

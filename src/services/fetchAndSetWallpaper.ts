@@ -1,9 +1,10 @@
 import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
-import { initDatabase } from '../storage/db'
+import { getCookie, initDatabase } from '../storage/db'
 import { getAppTempDir } from '../storage/filesystem'
-import { ipcMain, webContents } from 'electron'
+import { webContents } from 'electron'
+import { USERAGENT } from '../const/constant'
 
 const fetchAndSetWallpaper = async () => {
   try {
@@ -26,7 +27,13 @@ const fetchAndSetWallpaper = async () => {
     const { id, url } = result
     if (url) {
       // Download the wallpaper image to a temporary directory
-      const response = await axios.get(url, { responseType: 'stream' })
+      const response = await axios.get(url, {
+        responseType: 'stream',
+        headers: {
+          Cookie: getCookie('Getty Images').cookie,
+          'User-Agent': USERAGENT
+        }
+      })
       const tempDir = getAppTempDir()
       const idurl = url.split('/')[4]
       if (!fs.existsSync(path.join(tempDir, `/PapersJS/`))) {

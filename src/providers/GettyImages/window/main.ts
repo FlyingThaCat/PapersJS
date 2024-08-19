@@ -36,7 +36,7 @@ ipcMain.on('spawn-gettyImages', () => {
   console.log("IMCALLEDBYIPC")
   createGettyImagesWindow()
 })
-ipcMain.on('despawn-gettyImages', (event, cookie) => {
+ipcMain.on('despawn-gettyImages', () => {
   if (gettyImages) {
     gettyImages.close()
   }

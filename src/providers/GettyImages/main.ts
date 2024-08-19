@@ -5,7 +5,7 @@ import { getCookie, insertWallpaper } from '../../storage/db'
 
 const searchImages = async (query: string, type: string) => {
   try {
-    const images = []
+    const images: string[] = []
     const url = `https://www.gettyimages.com/search/2/image?family=${type}&orientations=horizontal&phrase=${encodeURI(query)}`
 
     const { data } = await axios.get(url, {
@@ -22,7 +22,8 @@ const searchImages = async (query: string, type: string) => {
     })
 
     for (const image of images) {
-      getImages(image)
+      // timeout to avoid rate limiting
+      getImages(image, query)
     }
     // return $
   } catch (error) {
@@ -30,7 +31,7 @@ const searchImages = async (query: string, type: string) => {
   }
 }
 
-const getImages = async (url: string) => {
+const getImages = async (url: string, query: string) => {
   try {
     const { data } = await axios.get(url, {
       headers: {
@@ -41,18 +42,18 @@ const getImages = async (url: string) => {
 
     const $ = cherrio.load(data)
     // Find <source> tags within <picture> elements that have type="image/jpeg" and no media attribute
-    const sources = $('picture source[type="image/jpeg"]').filter((i, el) => {
+    const sources = $('picture source[type="image/jpeg"]').filter((_, el) => {
       const media = $(el).attr('media')
       const srcset = $(el).attr('srcset')
 
       // Ensure the <source> tag doesn't have a media attribute and contains 2048x2048 image
-      return !media && srcset && srcset.includes('2048x2048')
+      return !media && !!srcset && srcset.includes('2048x2048')
     })
 
     // Get the srcset attribute of the filtered <source> tag
-    const srcsets = sources.map((i, el) => $(el).attr('srcset')).get()
+    const srcsets = sources.map((_, el) => $(el).attr('srcset')).get()
 
-    insertWallpaper(srcsets[0])
+    insertWallpaper(srcsets[0], query)
   } catch (error) {
     console.error('Getty Images search error:', error)
   }
