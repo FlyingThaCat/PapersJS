@@ -3,6 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import { initDatabase } from '../storage/db'
 import { getAppTempDir } from '../storage/filesystem'
+import {ipcMain, webContents} from 'electron'
 
 const fetchAndSetWallpaper = async () => {
   try {
@@ -40,6 +41,9 @@ const fetchAndSetWallpaper = async () => {
       console.log(`Wallpaper downloaded to: ${tempPath}`)
       // Set the wallpaper
       await setWallpaper(tempPath)
+      webContents.getAllWebContents().forEach((content) => {
+        content.send('update-current-wallpaper', { url, id });
+      });
 
       // Update the last_used field in the database
       const now = new Date().toISOString()

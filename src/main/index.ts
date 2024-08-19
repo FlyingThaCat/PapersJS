@@ -184,6 +184,10 @@ app.whenReady().then(() => {
     }
   })
 
+  ipcMain.on('update-current-wallpaper', (_, url) => {
+    console.log('Updating wallpaper:', url)
+  })
+
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
