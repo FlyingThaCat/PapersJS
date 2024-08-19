@@ -6,7 +6,6 @@ export default {
   setup() {
     const currentImage = ref(null)
     window.electron.ipcRenderer.on('update-current-wallpaper', (event, imageData) => {
-      console.log("update-current-wallpaper", imageData.url)
       currentImage.value = imageData.url
     })
     return { currentImage }

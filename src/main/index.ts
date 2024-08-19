@@ -8,9 +8,11 @@ import { addSearch, initDatabase } from '../storage/db'
 import { searchImages } from '../providers/GettyImages/main'
 import { fetchAndUpdateCookie } from '../services/fetchCookie'
 import { fetchAndSetWallpaper } from '../services/fetchAndSetWallpaper'
+import { s } from 'vite/dist/node/types.d-aGj9QkWt'
 
-let currentIndex = 0
-// let interval = 300;
+// Get the current update interval
+const db = initDatabase()
+const updateInterval = db.prepare('SELECT updateInterval FROM settings').get().updateInterval
 
 function createWindow(): void {
   // Create the browser window.
@@ -31,6 +33,8 @@ function createWindow(): void {
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+    fetchAndSetWallpaper()
+    setInterval(fetchAndSetWallpaper, updateInterval * 1000)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -53,21 +57,6 @@ const checkIfDatabaseExists = async () => {
     const db = initDatabase()
     db.close()
   }
-}
-
-function fetchAndUpdateWallpaper() {
-  const db = initDatabase()
-  db.all('SELECT * FROM search ORDER BY id', [], (err, rows) => {
-    if (err) {
-      throw err
-    }
-
-    if (rows.length > 0) {
-      const data = rows[currentIndex]
-      console.log('Setting wallpaper:', data.query, data.provider, data.type)
-      currentIndex = (currentIndex + 1) % rows.length
-    }
-  })
 }
 
 // This method will be called when Electron has finished
@@ -177,15 +166,11 @@ app.whenReady().then(() => {
 
   ipcMain.handle('fetch-cookies', () => {
     try {
-      console.log("Bonked")
+      console.log('Bonked')
       fetchAndUpdateCookie()
     } catch (error) {
       console.error('Error fetching provider:', error)
     }
-  })
-
-  ipcMain.on('update-current-wallpaper', (_, url) => {
-    console.log('Updating wallpaper:', url)
   })
 
   // IPC test
@@ -193,8 +178,6 @@ app.whenReady().then(() => {
 
   checkIfDatabaseExists().then(() => {
     createWindow()
-    fetchAndSetWallpaper()
-    setInterval(fetchAndSetWallpaper, 10000)
   })
 
   app.on('activate', function () {
