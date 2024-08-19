@@ -1,5 +1,5 @@
-import { BrowserWindow, ipcMain } from 'electron'
-import preloader from '../../../resources/preloaders/GettyImages.js?asset'
+import { BrowserWindow, ipcMain, ipcRenderer } from 'electron'
+import preloader from '../../../../resources/preloaders/GettyImages.js?asset'
 import { USERAGENT } from '../../../const/constant'
 
 let gettyImages: BrowserWindow | null = null
@@ -28,8 +28,7 @@ const createGettyImagesWindow = () => {
 ipcMain.on('spawn-gettyImages', () => createGettyImagesWindow())
 ipcMain.on('despawn-gettyImages', (event, cookie) => {
   if (gettyImages) {
-    gettyImages.close()
-    ipcMain.emit('insert-new-cookies', 'Getty Images', cookie)
+      gettyImages.close()
   }
 })
 

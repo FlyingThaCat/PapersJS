@@ -6,8 +6,9 @@ import { getAppUserDataDir } from '../storage/filesystem'
 import fs from 'fs'
 import { addSearch, initDatabase } from '../storage/db'
 import { searchImages } from '../providers/GettyImages/main'
+import { fetchAndUpdateCookie } from '../services/fetchCookie'
 
-let currentIndex = 0;
+let currentIndex = 0
 // let interval = 300;
 
 function createWindow(): void {
@@ -57,15 +58,15 @@ function fetchAndUpdateWallpaper() {
   const db = initDatabase()
   db.all('SELECT * FROM search ORDER BY id', [], (err, rows) => {
     if (err) {
-      throw err;
+      throw err
     }
-    
+
     if (rows.length > 0) {
-      const data = rows[currentIndex];
-      console.log('Setting wallpaper:', data.query, data.provider, data.type);
-      currentIndex = (currentIndex + 1) % rows.length;
+      const data = rows[currentIndex]
+      console.log('Setting wallpaper:', data.query, data.provider, data.type)
+      currentIndex = (currentIndex + 1) % rows.length
     }
-  });
+  })
 }
 
 // This method will be called when Electron has finished
@@ -151,7 +152,12 @@ app.whenReady().then(() => {
   ipcMain.handle('insert-new-cookie', async (_, provider, cookie) => {
     try {
       const db = initDatabase()
-      const insertQuery = db.prepare('INSERT INTO cookies (provider, cookie) VALUES (?, ?)')
+
+      // Insert the new cookie or replace the existing one
+      const insertQuery = db.prepare(`
+        INSERT OR REPLACE INTO cookies (provider, cookie) VALUES (?, ?)
+      `)
+
       insertQuery.run(provider, cookie)
     } catch (error) {
       console.error('Database operation error:', error)
@@ -165,6 +171,14 @@ app.whenReady().then(() => {
       return query.get(provider)
     } catch (error) {
       console.error('Database operation error:', error)
+    }
+  })
+
+  ipcMain.handle('fetch-cookies', () => {
+    try {
+      fetchAndUpdateCookie()
+    } catch (error) {
+      console.error('Error fetching provider:', error)
     }
   })
 

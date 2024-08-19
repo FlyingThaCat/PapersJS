@@ -6,6 +6,7 @@
     "src/providers/*",
     "src/const/*",
     "src/storage/*",
+    "src/services/*",
     "src/preload/**/*"
   ],
   "compilerOptions": {

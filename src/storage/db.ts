@@ -24,7 +24,7 @@ const initDatabase = () => {
   const cookiesQuery = `
     CREATE TABLE IF NOT EXISTS cookies (
       id INTEGER PRIMARY KEY,
-      provider TEXT NOT NULL,
+      provider TEXT UNIQUE NOT NULL,
       cookie TEXT NOT NULL
     )`
   db.exec(cookiesQuery)
