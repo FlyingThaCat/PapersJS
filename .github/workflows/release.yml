@@ -31,7 +31,7 @@ jobs:
 
       - name: build-mac
         if: matrix.os == 'macos-latest'
-        run: npm run build:mac
+        run: sudo -H pip install setuptools && npm run build:mac
 
       - name: build-win
         if: matrix.os == 'windows-latest'
