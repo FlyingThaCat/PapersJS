@@ -22,8 +22,7 @@ const fetchAndUpdateCookie = () => {
       // If no cookie is found, proceed with fetching and updating the cookie
       switch (provider) {
         case 'Getty Images':
-          console.log('Fetching Getty Images cookie');
-          // createGettyImagesWindow();
+          createGettyImagesWindow();
           break;
         // Add more cases here if you have other providers
         default:

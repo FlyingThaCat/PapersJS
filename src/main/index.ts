@@ -8,7 +8,6 @@ import { addSearch, initDatabase } from '../storage/db'
 import { searchImages } from '../providers/GettyImages/main'
 import { fetchAndUpdateCookie } from '../services/fetchCookie'
 import { fetchAndSetWallpaper } from '../services/fetchAndSetWallpaper'
-import { s } from 'vite/dist/node/types.d-aGj9QkWt'
 
 // Get the current update interval
 const db = initDatabase()
@@ -34,7 +33,6 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
     fetchAndSetWallpaper()
-    setInterval(fetchAndSetWallpaper, updateInterval * 1000)
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -178,6 +176,7 @@ app.whenReady().then(() => {
 
   checkIfDatabaseExists().then(() => {
     createWindow()
+    setInterval(fetchAndSetWallpaper, updateInterval * 1000)
   })
 
   app.on('activate', function () {
