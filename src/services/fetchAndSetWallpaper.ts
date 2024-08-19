@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import { initDatabase } from '../storage/db'
 import { getAppTempDir } from '../storage/filesystem'
-import {ipcMain, webContents} from 'electron'
+import { ipcMain, webContents } from 'electron'
 
 const fetchAndSetWallpaper = async () => {
   try {
@@ -11,7 +11,7 @@ const fetchAndSetWallpaper = async () => {
     const db = initDatabase()
 
     // Fetch the next wallpaper URL from the database
-    const { url, id } = db
+    const result = db
       .prepare(
         `
       SELECT id, url FROM wallpapers 
@@ -19,7 +19,11 @@ const fetchAndSetWallpaper = async () => {
     `
       )
       .get()
+    if (!result || !result.url) {
+      return
+    }
 
+    const { id, url } = result
     if (url) {
       // Download the wallpaper image to a temporary directory
       const response = await axios.get(url, { responseType: 'stream' })
@@ -42,8 +46,8 @@ const fetchAndSetWallpaper = async () => {
       // Set the wallpaper
       await setWallpaper(tempPath)
       webContents.getAllWebContents().forEach((content) => {
-        content.send('update-current-wallpaper', { url, id });
-      });
+        content.send('update-current-wallpaper', { url, id })
+      })
 
       // Update the last_used field in the database
       const now = new Date().toISOString()

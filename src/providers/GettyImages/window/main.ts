@@ -3,9 +3,13 @@ import preloader from '../../../../resources/preloaders/GettyImages.js?asset'
 import { USERAGENT } from '../../../const/constant'
 
 let gettyImages: BrowserWindow | null = null
+let isGettyImagesWindowOpen = false
 
 const createGettyImagesWindow = () => {
-  if (gettyImages) return
+  console.log("IMCALLED")
+  if (gettyImages || isGettyImagesWindowOpen) return
+
+  isGettyImagesWindowOpen = true
 
   gettyImages = new BrowserWindow({
     width: 450,
@@ -22,13 +26,19 @@ const createGettyImagesWindow = () => {
     userAgent: USERAGENT
   })
 
-  gettyImages.on('closed', () => (gettyImages = null))
+  gettyImages.on('closed', () => {
+    gettyImages = null
+    isGettyImagesWindowOpen = false
+  })
 }
 
-ipcMain.on('spawn-gettyImages', () => createGettyImagesWindow())
+ipcMain.on('spawn-gettyImages', () => {
+  console.log("IMCALLEDBYIPC")
+  createGettyImagesWindow()
+})
 ipcMain.on('despawn-gettyImages', (event, cookie) => {
   if (gettyImages) {
-      gettyImages.close()
+    gettyImages.close()
   }
 })
 

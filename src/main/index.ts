@@ -4,14 +4,27 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { getAppUserDataDir } from '../storage/filesystem'
 import fs from 'fs'
-import { addSearch, initDatabase } from '../storage/db'
+import { addSearch, initDatabase, updateInterval } from '../storage/db'
 import { searchImages } from '../providers/GettyImages/main'
 import { fetchAndUpdateCookie } from '../services/fetchCookie'
 import { fetchAndSetWallpaper } from '../services/fetchAndSetWallpaper'
 
-// Get the current update interval
-const db = initDatabase()
-const updateInterval = db.prepare('SELECT updateInterval FROM settings').get().updateInterval
+// Track the interval ID
+let wallpaperInterval: NodeJS.Timeout | null = null;
+
+const getUpdateInterval = () => {
+  const db = initDatabase();
+  const result = db.prepare('SELECT updateInterval FROM settings').get();
+  return result ? result.updateInterval * 1000 : 300000; // Default to 5 minutes if not set
+}
+
+const updateWallpaperInterval = () => {
+  if (wallpaperInterval) {
+    clearInterval(wallpaperInterval);
+  }
+  const interval = getUpdateInterval();
+  wallpaperInterval = setInterval(fetchAndSetWallpaper, interval);
+}
 
 function createWindow(): void {
   // Create the browser window.
@@ -114,6 +127,7 @@ app.whenReady().then(() => {
 
       const db = initDatabase()
       db.prepare('UPDATE settings SET updateInterval = ?').run(interval)
+      updateWallpaperInterval();
     } catch (error) {
       console.error('Database operation error:', error)
     }
@@ -175,6 +189,7 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   checkIfDatabaseExists().then(() => {
+    updateInterval(initDatabase())
     createWindow()
     setInterval(fetchAndSetWallpaper, updateInterval * 1000)
   })

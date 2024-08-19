@@ -17,7 +17,7 @@ const initDatabase = () => {
 
   const settingsQuery = `
     CREATE TABLE IF NOT EXISTS settings (
-  updateInterval INTEGER NOT NULL DEFAULT 300
+  updateInterval INTEGER NOT NULL 
 )`
   db.exec(settingsQuery)
 
@@ -33,6 +33,7 @@ const initDatabase = () => {
   CREATE TABLE IF NOT EXISTS wallpapers (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   url TEXT NOT NULL,
+  query TEXT NOT NULL,
   last_used DATETIME DEFAULT NULL
 )`
   db.exec(wallpapers)
@@ -51,14 +52,22 @@ const addSearch = (db, searchQuery, source, type) => {
   }
 }
 
-const updateInterval = (db, interval) => {
+const updateInterval = (db, interval = 300) => {
   try {
-    console.log('Updating interval:', interval)
-    const updateQuery = db.prepare('UPDATE settings SET updateInterval = ?')
-    const info = updateQuery.run(interval)
-    console.log('Update Result:', info)
+    // Check if a row already exists
+    const row = db.prepare('SELECT COUNT(*) AS count FROM settings').get()
+
+    if (row.count === 0) {
+      // Insert a new row with the default value if no rows exist
+      db.prepare('INSERT INTO settings (updateInterval) VALUES (?)').run(interval)
+      console.log('Default value inserted:', interval)
+    } else {
+      // Update the existing row
+      db.prepare('UPDATE settings SET updateInterval = ?').run(interval)
+      console.log('Update interval set to:', interval)
+    }
   } catch (error) {
-    console.error('Database update error:', error)
+    console.error('Error setting updateInterval:', error)
   }
 }
 
@@ -74,13 +83,13 @@ const getCookie = (provider) => {
 
 const insertWallpaper = async (url) => {
   try {
-    const db = initDatabase();
-    const insertQuery = db.prepare('INSERT INTO wallpapers (url) VALUES (?)');
-    insertQuery.run(url);
-    console.log('Wallpaper inserted:', url);
+    const db = initDatabase()
+    const insertQuery = db.prepare('INSERT INTO wallpapers (url) VALUES (?)')
+    insertQuery.run(url)
+    console.log('Wallpaper inserted:', url)
   } catch (error) {
-    console.error('Failed to insert wallpaper:', error);
+    console.error('Failed to insert wallpaper:', error)
   }
-};
+}
 
 export { initDatabase, addSearch, updateInterval, getCookie, insertWallpaper }
