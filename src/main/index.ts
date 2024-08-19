@@ -4,7 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { getAppUserDataDir } from '../storage/filesystem'
 import fs from 'fs'
-import { initDatabase, insertImage } from '../storage/db'
+import { addSearch, initDatabase } from '../storage/db'
 import { searchImages } from '../providers/GettyImages/main'
 
 let currentIndex = 0;
@@ -55,7 +55,7 @@ const checkIfDatabaseExists = async () => {
 
 function fetchAndUpdateWallpaper() {
   const db = initDatabase()
-  db.all('SELECT * FROM images ORDER BY id', [], (err, rows) => {
+  db.all('SELECT * FROM search ORDER BY id', [], (err, rows) => {
     if (err) {
       throw err;
     }
@@ -82,28 +82,28 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  ipcMain.handle('db-insert-image', async (_, searchQuery, source, type) => {
+  ipcMain.handle('db-add-search', async (_, searchQuery, source, type) => {
     try {
       const db = initDatabase()
-      insertImage(db, searchQuery, source, type)
+      addSearch(db, searchQuery, source, type)
     } catch (error) {
       console.error('Database operation error:', error)
     }
   })
 
-  ipcMain.handle('db-get-images', async () => {
+  ipcMain.handle('db-get-search', async () => {
     try {
       const db = initDatabase()
-      return db.prepare('SELECT * FROM images').all()
+      return db.prepare('SELECT * FROM search').all()
     } catch (error) {
       console.error('Database operation error:', error)
     }
   })
 
-  ipcMain.handle('db-delete-image', async (_, id) => {
+  ipcMain.handle('db-delete-search', async (_, id) => {
     try {
       const db = initDatabase()
-      db.prepare('DELETE FROM images WHERE id = ?').run(id)
+      db.prepare('DELETE FROM search WHERE id = ?').run(id)
     } catch (error) {
       console.error('Database operation error:', error)
     }
@@ -145,6 +145,26 @@ app.whenReady().then(() => {
       console.log('Getty Images search result:', result)
     } catch (error) {
       console.error('Getty Images search error:', error)
+    }
+  })
+
+  ipcMain.handle('insert-new-cookie', async (_, provider, cookie) => {
+    try {
+      const db = initDatabase()
+      const insertQuery = db.prepare('INSERT INTO cookies (provider, cookie) VALUES (?, ?)')
+      insertQuery.run(provider, cookie)
+    } catch (error) {
+      console.error('Database operation error:', error)
+    }
+  })
+
+  ipcMain.handle('get-cookie', async (_, provider) => {
+    try {
+      const db = initDatabase()
+      const query = db.prepare('SELECT cookie FROM cookies WHERE provider = ?')
+      return query.get(provider)
+    } catch (error) {
+      console.error('Database operation error:', error)
     }
   })
 

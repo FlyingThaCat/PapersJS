@@ -4,6 +4,7 @@
     "electron.vite.config.*",
     "src/main/**/*",
     "src/providers/*",
+    "src/const/*",
     "src/storage/*",
     "src/preload/**/*"
   ],

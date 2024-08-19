@@ -9,7 +9,7 @@ const type = ref('Creative')
 const addImage = async () => {
   try {
     await window.electron.ipcRenderer.invoke(
-      'db-insert-image',
+      'db-add-search',
       searchQuery.value,
       source.value,
       type.value

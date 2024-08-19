@@ -1,5 +1,6 @@
 import { BrowserWindow, ipcMain } from 'electron'
 import preloader from '../../../resources/preloaders/GettyImages.js?asset'
+import { USERAGENT } from '../../../const/constant'
 
 let gettyImages: BrowserWindow | null = null
 
@@ -18,18 +19,17 @@ const createGettyImagesWindow = () => {
   })
 
   gettyImages.loadURL('https://gettyimages.com', {
-    userAgent:
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15'
+    userAgent: USERAGENT
   })
 
   gettyImages.on('closed', () => (gettyImages = null))
 }
 
 ipcMain.on('spawn-gettyImages', () => createGettyImagesWindow())
-ipcMain.on('despawn-gettyImages', (event, message) => {
+ipcMain.on('despawn-gettyImages', (event, cookie) => {
   if (gettyImages) {
     gettyImages.close()
-    console.log('[RECEIVEDMESSAGE]:', message)
+    ipcMain.emit('insert-new-cookies', 'Getty Images', cookie)
   }
 })
 

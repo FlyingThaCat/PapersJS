@@ -9,9 +9,9 @@ const props = defineProps<{
 
 const emit = defineEmits(['image-deleted'])
 
-const deleteImage = async () => {
+const deleteSearch = async () => {
   try {
-    await window.electron.ipcRenderer.invoke('db-delete-image', props.id)
+    await window.electron.ipcRenderer.invoke('db-delete-search', props.id)
     emit('image-deleted', props.id)
   } catch (error) {
     console.error('Failed to delete image:', error)
@@ -32,7 +32,7 @@ const deleteImage = async () => {
         {{ badge }}
       </div>
     </div>
-    <button class="hover:bg-red-600 hover:rounded-md mx-2" @click="deleteImage">
+    <button class="hover:bg-red-600 hover:rounded-md mx-2" @click="deleteSearch">
       <Vicon name="io-close" class="h-8 w-8 text-white" />
     </button>
   </div>

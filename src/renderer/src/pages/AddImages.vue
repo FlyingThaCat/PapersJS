@@ -14,7 +14,7 @@ export default {
 
     const fetchImages = async () => {
       try {
-        const fetchedImages = await window.electron.ipcRenderer.invoke('db-get-images')
+        const fetchedImages = await window.electron.ipcRenderer.invoke('db-get-search')
         images.value = fetchedImages
       } catch (error) {
         console.error('Failed to fetch images:', error)

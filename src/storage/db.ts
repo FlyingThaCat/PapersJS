@@ -6,14 +6,14 @@ const initDatabase = () => {
   const dbPath = join(getAppUserDataDir(), 'Database', 'appData.db')
   const db = new Database(dbPath)
 
-  const imagesQuery = `
-    CREATE TABLE IF NOT EXISTS images (
+  const searchQuery = `
+    CREATE TABLE IF NOT EXISTS search (
       id INTEGER PRIMARY KEY,
       query TEXT NOT NULL UNIQUE,
       provider TEXT NOT NULL,
       type TEXT NOT NULL
     )`
-  db.exec(imagesQuery)
+  db.exec(searchQuery)
 
   const settingsQuery = `
     CREATE TABLE IF NOT EXISTS settings (
@@ -21,13 +21,21 @@ const initDatabase = () => {
 )`
   db.exec(settingsQuery)
 
+  const cookiesQuery = `
+    CREATE TABLE IF NOT EXISTS cookies (
+      id INTEGER PRIMARY KEY,
+      provider TEXT NOT NULL,
+      cookie TEXT NOT NULL
+    )`
+  db.exec(cookiesQuery)
+
   return db
 }
 
-const insertImage = (db, searchQuery, source, type) => {
+const addSearch = (db, searchQuery, source, type) => {
   try {
     console.log('Inserting image:', searchQuery, source, type)
-    const insertQuery = db.prepare('INSERT INTO images (query, provider, type) VALUES (?, ?, ?)')
+    const insertQuery = db.prepare('INSERT INTO search (query, provider, type) VALUES (?, ?, ?)')
     const info = insertQuery.run(searchQuery, source, type)
     console.log('Insert Result:', info)
   } catch (error) {
@@ -46,4 +54,14 @@ const updateInterval = (db, interval) => {
   }
 }
 
-export { initDatabase, insertImage, updateInterval }
+const getCookie = (provider) => {
+  try {
+    const db = initDatabase()
+    const query = db.prepare('SELECT cookie FROM cookies WHERE provider = ?')
+    return query.get(provider)
+  } catch (error) {
+    console.error('Database operation error:', error)
+  }
+}
+
+export { initDatabase, addSearch, updateInterval, getCookie }
