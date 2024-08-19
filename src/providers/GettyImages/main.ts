@@ -1,7 +1,7 @@
 import axios from 'axios'
 import cherrio from 'cheerio'
 import { USERAGENT } from '../../const/constant'
-import { getCookie } from '../../storage/db'
+import { getCookie, insertWallpaper } from '../../storage/db'
 
 const searchImages = async (query: string, type: string) => {
   try {
@@ -52,7 +52,7 @@ const getImages = async (url: string) => {
     // Get the srcset attribute of the filtered <source> tag
     const srcsets = sources.map((i, el) => $(el).attr('srcset')).get()
 
-    console.log('Filtered srcsets (2048x2048):', srcsets)
+    insertWallpaper(srcsets[0])
   } catch (error) {
     console.error('Getty Images search error:', error)
   }

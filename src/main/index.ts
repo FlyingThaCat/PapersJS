@@ -7,6 +7,7 @@ import fs from 'fs'
 import { addSearch, initDatabase } from '../storage/db'
 import { searchImages } from '../providers/GettyImages/main'
 import { fetchAndUpdateCookie } from '../services/fetchCookie'
+import { fetchAndSetWallpaper } from '../services/fetchAndSetWallpaper'
 
 let currentIndex = 0
 // let interval = 300;
@@ -176,6 +177,7 @@ app.whenReady().then(() => {
 
   ipcMain.handle('fetch-cookies', () => {
     try {
+      console.log("Bonked")
       fetchAndUpdateCookie()
     } catch (error) {
       console.error('Error fetching provider:', error)
@@ -187,6 +189,8 @@ app.whenReady().then(() => {
 
   checkIfDatabaseExists().then(() => {
     createWindow()
+    fetchAndSetWallpaper()
+    setInterval(fetchAndSetWallpaper, 10000)
   })
 
   app.on('activate', function () {

@@ -28,7 +28,8 @@
     "cheerio": "^1.0.0",
     "electron-updater": "^6.1.7",
     "oh-vue-icons": "^1.0.0-rc3",
-    "vue-router": "^4.4.3"
+    "vue-router": "^4.4.3",
+    "wallpaper": "^7.2.1"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",

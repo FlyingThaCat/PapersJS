@@ -16,6 +16,7 @@ const addImage = async () => {
     )
     emit('image-added', searchQuery.value)
     await window.electron.ipcRenderer.invoke('fetch-cookies')
+    await window.electron.ipcRenderer.invoke('getty-images-search', searchQuery.value, type.value)
     const dialog = document.getElementById('AddImageModal') as HTMLDialogElement
     dialog?.close()
   } catch (error) {

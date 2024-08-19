@@ -29,6 +29,14 @@ const initDatabase = () => {
     )`
   db.exec(cookiesQuery)
 
+  const wallpapers = `
+  CREATE TABLE IF NOT EXISTS wallpapers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  url TEXT NOT NULL,
+  last_used DATETIME DEFAULT NULL
+)`
+  db.exec(wallpapers)
+
   return db
 }
 
@@ -64,4 +72,15 @@ const getCookie = (provider) => {
   }
 }
 
-export { initDatabase, addSearch, updateInterval, getCookie }
+const insertWallpaper = async (url) => {
+  try {
+    const db = initDatabase();
+    const insertQuery = db.prepare('INSERT INTO wallpapers (url) VALUES (?)');
+    insertQuery.run(url);
+    console.log('Wallpaper inserted:', url);
+  } catch (error) {
+    console.error('Failed to insert wallpaper:', error);
+  }
+};
+
+export { initDatabase, addSearch, updateInterval, getCookie, insertWallpaper }

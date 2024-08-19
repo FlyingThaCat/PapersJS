@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, ipcRenderer } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import preloader from '../../../../resources/preloaders/GettyImages.js?asset'
 import { USERAGENT } from '../../../const/constant'
 
