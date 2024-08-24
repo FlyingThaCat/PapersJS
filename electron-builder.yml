@@ -14,11 +14,11 @@ asarUnpack:
   - node_modules/wallpaper
 win:
   executableName: papersjs
-# nsis:
-#   artifactName: ${name}-${version}-setup.${ext}
-#   shortcutName: ${productName}
-#   uninstallDisplayName: ${productName}
-#   createDesktopShortcut: always
+nsis:
+  artifactName: ${name}-${version}-setup.${ext}
+  shortcutName: ${productName}
+  uninstallDisplayName: ${productName}
+  createDesktopShortcut: always
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
