@@ -8,8 +8,10 @@ const initDatabase = () => {
   // if the database folder does not exist, create it
   try {
     fs.mkdirSync(dbPath)
-  } catch (error) {
-    console.error('Failed to create database folder:', error)
+  } catch (error: any) {
+    if (error.code != 'EEXIST'){
+      console.error('Failed to create database folder:', error)
+    }
   }
 
   const db = new Database(join(dbPath, 'database.db'))
@@ -64,15 +66,10 @@ const updateInterval = (db, interval = 300) => {
   try {
     // Check if a row already exists
     const row = db.prepare('SELECT COUNT(*) AS count FROM settings').get()
-
     if (row.count === 0) {
       // Insert a new row with the default value if no rows exist
       db.prepare('INSERT INTO settings (updateInterval) VALUES (?)').run(interval)
       console.log('Default value inserted:', interval)
-    } else {
-      // Update the existing row
-      db.prepare('UPDATE settings SET updateInterval = ?').run(interval)
-      console.log('Update interval set to:', interval)
     }
   } catch (error) {
     console.error('Error setting updateInterval:', error)

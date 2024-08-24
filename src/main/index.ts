@@ -32,8 +32,7 @@ function createWindow(): void {
     width: 800,
     height: 600,
     show: false,
-    titleBarStyle: 'hidden',
-    frame: false,
+    ...(process.platform === 'darwin' ? {titleBarStyle: 'hidden', frame: false} : {}),
     autoHideMenuBar: true,
     resizable: false,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -64,9 +63,13 @@ function createWindow(): void {
 
 const checkIfDatabaseExists = async () => {
   const dbPath = join(getAppUserDataDir(), 'Database', 'appData.db')
-  if (!fs.existsSync(dbPath)) {
-    const db = initDatabase()
-    db.close()
+  if (fs.existsSync(dbPath)) {
+    try {
+      const db = await initDatabase();
+      db.close();
+    } catch (error) {
+      console.error('Failed to initialize or close the database:', error);
+    }
   }
 }
 
