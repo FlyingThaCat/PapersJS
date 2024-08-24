@@ -11,8 +11,9 @@ jobs:
 
     strategy:
       matrix:
-        # ubuntu-latest, 
-        os: [macos-latest, windows-latest]
+        # ubuntu-latest,
+        # use macos-13 for intel compilation ??? 
+        os: [macos-13, windows-latest]
 
     steps:
       - name: Check out Git repository
