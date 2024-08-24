@@ -194,6 +194,7 @@ app.whenReady().then(() => {
 
   checkIfDatabaseExists().then(() => {
     updateInterval(initDatabase())
+    updateWallpaperInterval()
     createWindow()
   })
 
