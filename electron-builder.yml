@@ -20,11 +20,6 @@ win:
 #   uninstallDisplayName: ${productName}
 #   createDesktopShortcut: always
 mac:
-  target: 
-    target: default
-    arch: 
-      - x64
-      - arm64
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.

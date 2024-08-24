@@ -16,7 +16,9 @@ const fetchAndSetWallpaper = async () => {
       // Adjust the path to point to the unpacked module in production
       const wallpaperModulePath = path.resolve(__dirname, 'node_modules', 'wallpaper')
         .replace('app.asar', 'app.asar.unpacked')
-        .replace('out\\main\\', '');
+        .replace('out\\main\\', '')
+        .replace('out/main/', '');
+      console.log('wallpaperModulePath:', wallpaperModulePath);
       const wallpaperModuleUrl = `file://${wallpaperModulePath.replace(/\\/g, '/')}/index.js`;
       ({ setWallpaper } = await import(wallpaperModuleUrl));
     }
