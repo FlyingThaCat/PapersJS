@@ -35,7 +35,7 @@ jobs:
     #     run: sudo snap install snapcraft --classic && yarn build:linux
 
       - name: build-mac
-        if: matrix.os == 'macos-latest'
+        if: matrix.os == 'macos-13'
         run: sudo -H pip install setuptools && yarn build:mac
 
       - name: build-win
