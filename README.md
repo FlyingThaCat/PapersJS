@@ -1,27 +1,30 @@
-# papersjs
+![PapersJS Logo](https://raw.githubusercontent.com/FlyingThaCat/PapersJS/master/resources/PapersJS.svg)
 
-An Electron application with Vue and TypeScript
+An Electron application that give you wallpaper from various image provider
 
-## Recommended IDE Setup
+## Todo
+- [ ] implement the propper dark mode
+- [ ] implement more provider
+- [ ] clean up code
+- [ ] develop for linux
+- [ ] fetch page 2... if its already empty (unsplash)
+- [ ] fix some random ui bug that make textbox cant be filled
+- [ ] add image overlay and add button to next or download the image
+- [ ] make background service so it can updated on closed
+- [ ] make system tray ?????
+- [ ] fix the duration system db stored in second so do convertion to (s, m, h) from frontend
+- [ ] improve the ui
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
-
-## Project Setup
-
-### Install
-
+## Contributing
+### Install 
 ```bash
 $ yarn
 ```
-
 ### Development
-
 ```bash
 $ yarn dev
 ```
-
 ### Build
-
 ```bash
 # For windows
 $ yarn build:win
@@ -29,6 +32,6 @@ $ yarn build:win
 # For macOS
 $ yarn build:mac
 
-# For Linux
+# For Linux (untested)
 $ yarn build:linux
 ```
