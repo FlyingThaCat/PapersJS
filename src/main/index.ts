@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, Tray, Menu, nativeImage } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -46,11 +46,16 @@ function createWindow(): void {
     mainWindow.show()
     fetchAndSetWallpaper()
   })
-
+  
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
+
+  mainWindow.on('close', (event) => {
+    event.preventDefault(); // Prevent the window from quitting
+    mainWindow.hide(); // Hide the window instead
+  });
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
@@ -59,6 +64,15 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  app.on('before-quit', () => {
+    // Perform any cleanup or save data if necessary
+    // Your app-specific logic here
+  
+    // Close the main window gracefully
+    tray.destroy();
+    mainWindow.destroy();
+  });
 }
 
 const checkIfDatabaseExists = async () => {
@@ -73,10 +87,21 @@ const checkIfDatabaseExists = async () => {
   }
 }
 
+let tray;
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+  tray = new Tray(nativeImage.createEmpty())
+  const contextMenu = Menu.buildFromTemplate([
+
+    // { label: 'Next Wallpaper', click: () => fetchAndSetWallpaper()},
+    {role: 'quit'}
+  ])
+  tray.setToolTip("PapersJS");
+  tray.setContextMenu(contextMenu);
+
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
@@ -203,6 +228,7 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -214,5 +240,3 @@ app.on('window-all-closed', () => {
   }
 })
 
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
