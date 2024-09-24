@@ -9,7 +9,7 @@ const initDatabase = () => {
   try {
     fs.mkdirSync(dbPath)
   } catch (error: any) {
-    if (error.code != 'EEXIST'){
+    if (error.code != 'EEXIST') {
       console.error('Failed to create database folder:', error)
     }
   }

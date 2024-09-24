@@ -6,7 +6,7 @@ let gettyImages: BrowserWindow | null = null
 let isGettyImagesWindowOpen = false
 
 const createGettyImagesWindow = () => {
-  console.log("IMCALLED")
+  console.log('IMCALLED')
   if (gettyImages || isGettyImagesWindowOpen) return
 
   isGettyImagesWindowOpen = true
@@ -33,7 +33,7 @@ const createGettyImagesWindow = () => {
 }
 
 ipcMain.on('spawn-gettyImages', () => {
-  console.log("IMCALLEDBYIPC")
+  console.log('IMCALLEDBYIPC')
   createGettyImagesWindow()
 })
 ipcMain.on('despawn-gettyImages', () => {

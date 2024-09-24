@@ -8,21 +8,22 @@ import { USERAGENT } from '../const/constant'
 
 const fetchAndSetWallpaper = async () => {
   try {
-    let setWallpaper;
+    let setWallpaper
     if (process.env.NODE_ENV === 'development') {
       // Use the normal path in development
-      ({ setWallpaper } = await import('wallpaper'));
+      ;({ setWallpaper } = await import('wallpaper'))
     } else {
       // Adjust the path to point to the unpacked module in production
-      const wallpaperModulePath = path.resolve(__dirname, 'node_modules', 'wallpaper')
+      const wallpaperModulePath = path
+        .resolve(__dirname, 'node_modules', 'wallpaper')
         .replace('app.asar', 'app.asar.unpacked')
         .replace('out\\main\\', '')
-        .replace('out/main/', '');
-      console.log('wallpaperModulePath:', wallpaperModulePath);
-      const wallpaperModuleUrl = `file://${wallpaperModulePath.replace(/\\/g, '/')}/index.js`;
-      ({ setWallpaper } = await import(wallpaperModuleUrl));
+        .replace('out/main/', '')
+      console.log('wallpaperModulePath:', wallpaperModulePath)
+      const wallpaperModuleUrl = `file://${wallpaperModulePath.replace(/\\/g, '/')}/index.js`
+      ;({ setWallpaper } = await import(wallpaperModuleUrl))
     }
-    const db = initDatabase();
+    const db = initDatabase()
 
     // Fetch the next wallpaper URL from the database
     const result = db

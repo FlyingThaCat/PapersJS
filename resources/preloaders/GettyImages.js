@@ -26,14 +26,14 @@ window.addEventListener('load', () => {
     const intervalId = setInterval(() => {
       const cookie = checkCookie(true)
       if (cookie) {
-        ipcRenderer.invoke('insert-new-cookie', "Getty Images", cookie)
+        ipcRenderer.invoke('insert-new-cookie', 'Getty Images', cookie)
         ipcRenderer.send('despawn-gettyImages', cookie)
         clearInterval(intervalId)
       }
     }, 2000)
   } else {
     const cookie = checkCookie(false)
-    ipcRenderer.invoke('insert-new-cookie', "Getty Images", cookie)
+    ipcRenderer.invoke('insert-new-cookie', 'Getty Images', cookie)
     ipcRenderer.send('despawn-gettyImages', cookie)
   }
   // TODO HANDLE REFRESH BW TOKEN

@@ -9,7 +9,7 @@ export default {
       currentImage.value = imageData.url
     })
     return { currentImage }
-  },
+  }
 }
 </script>
 

@@ -12,7 +12,7 @@ export default {
 
 <template>
   <nav class="pt-5 flex justify-between no-select dragable">
-    <img :src="PapersJS" alt="PapersJS Logo" class="h-8 w-auto mr-4" draggable="false"  />
+    <img :src="PapersJS" alt="PapersJS Logo" class="h-8 w-auto mr-4" draggable="false" />
     <div class="flex gap-5 no-drag">
       <div class="tooltip tooltip-bottom" data-tip="Current Images">
         <router-link

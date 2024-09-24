@@ -3,6 +3,7 @@
 An Electron application that give you wallpaper from various image provider
 
 ## Todo
+
 - [ ] implement the propper dark mode
 - [ ] implement more provider
 - [ ] clean up code
@@ -16,15 +17,21 @@ An Electron application that give you wallpaper from various image provider
 - [ ] improve the ui
 
 ## Contributing
-### Install 
+
+### Install
+
 ```bash
 $ yarn
 ```
+
 ### Development
+
 ```bash
 $ yarn dev
 ```
+
 ### Build
+
 ```bash
 # For windows
 $ yarn build:win
